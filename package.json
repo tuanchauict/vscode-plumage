@@ -1,0 +1,59 @@
+{
+  "name": "plumage",
+  "displayName": "Plumage",
+  "description": "Automatically colors the title bar, activity bar, side bar, and status bar based on a hash of the workspace path. Theme-aware.",
+  "version": "0.0.1",
+  "publisher": "local",
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "plumage.refresh",
+        "title": "Plumage: Refresh Colors"
+      },
+      {
+        "command": "plumage.clear",
+        "title": "Plumage: Clear Colors"
+      },
+      {
+        "command": "plumage.shuffle",
+        "title": "Plumage: Shuffle (next color)"
+      },
+      {
+        "command": "plumage.pick",
+        "title": "Plumage: Pick Color..."
+      }
+    ],
+    "configuration": {
+      "title": "Plumage",
+      "properties": {
+        "plumage.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic colorization based on workspace path."
+        },
+        "plumage.hueOffset": {
+          "type": "integer",
+          "default": 0,
+          "description": "Offset added to the hash-derived color index. Bumped by Shuffle / Pick Color."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.4.0"
+  }
+}
