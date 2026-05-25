@@ -14,6 +14,10 @@
   <a href="LICENSE"><img src="https://img.shields.io/github/license/tuanchauict/vscode-plumage" alt="License"></a>
 </p>
 
+<p align="center">
+  <img src="screenshot/screenshot.png" alt="Three VSCode windows, each given a distinct color by Plumage based on its workspace path">
+</p>
+
 Built for people who keep ten VSCode windows open and can't tell which is which.
 
 ## Why not Peacock?
