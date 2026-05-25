@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.3
+
+- Fix broken screenshot on the marketplace listing by switching to an absolute raw.githubusercontent.com URL. Exclude `.github/` and the screenshot folder from the VSIX so the package size drops from 2.1 MB to ~14 KB.
+
 ## 0.0.2
 
 - Updated README: added screenshot of three cascaded VSCode windows with distinct Plumage colors, replaced retired marketplace badges with working ones, moved source-build instructions to a dedicated section.
