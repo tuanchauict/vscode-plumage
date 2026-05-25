@@ -9,9 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=tuanchauict.plumage"><img src="https://img.shields.io/visual-studio-marketplace/v/tuanchauict.plumage?label=Marketplace&color=blue" alt="Marketplace version"></a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=tuanchauict.plumage"><img src="https://img.shields.io/visual-studio-marketplace/i/tuanchauict.plumage" alt="Installs"></a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=tuanchauict.plumage"><img src="https://img.shields.io/visual-studio-marketplace/r/tuanchauict.plumage" alt="Rating"></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=tuanchauict.plumage"><img src="https://img.shields.io/badge/VSCode%20Marketplace-Install-007ACC?logo=visualstudiocode&logoColor=white" alt="Install from VSCode Marketplace"></a>
+  <a href="package.json"><img src="https://img.shields.io/github/package-json/v/tuanchauict/vscode-plumage?label=version&color=blue" alt="Version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/tuanchauict/vscode-plumage" alt="License"></a>
 </p>
 
