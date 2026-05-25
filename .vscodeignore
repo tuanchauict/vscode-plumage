@@ -1,7 +1,10 @@
 .vscode/**
 .vscode-test/**
+.claude/**
 src/**
 .gitignore
 tsconfig.json
+icon.svg
+icon@2x.png
 **/*.map
 **/*.ts

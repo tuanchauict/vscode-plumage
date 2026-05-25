@@ -3,7 +3,22 @@
   "displayName": "Plumage",
   "description": "Automatically colors the title bar, activity bar, side bar, and status bar based on a hash of the workspace path. Theme-aware.",
   "version": "0.0.1",
-  "publisher": "local",
+  "publisher": "tuanchauict",
+  "license": "MIT",
+  "keywords": [
+    "color",
+    "colour",
+    "theme",
+    "workspace",
+    "window",
+    "title bar",
+    "activity bar",
+    "side bar",
+    "status bar",
+    "peacock",
+    "multi-window",
+    "identify"
+  ],
   "icon": "icon.png",
   "repository": {
     "type": "git",
