@@ -1,10 +1,13 @@
 .vscode/**
 .vscode-test/**
 .claude/**
+.github/**
 src/**
+screenshot/**
 .gitignore
 tsconfig.json
 icon.svg
 icon@2x.png
+plumage-*.vsix
 **/*.map
 **/*.ts

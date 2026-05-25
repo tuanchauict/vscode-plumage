@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <img src="screenshot/screenshot.png" alt="Three VSCode windows, each given a distinct color by Plumage based on its workspace path">
+  <img src="https://raw.githubusercontent.com/tuanchauict/vscode-plumage/main/screenshot/screenshot.png" alt="Three VSCode windows, each given a distinct color by Plumage based on its workspace path">
 </p>
 
 Built for people who keep ten VSCode windows open and can't tell which is which.
