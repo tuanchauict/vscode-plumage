@@ -8,6 +8,13 @@
   Automatically color the <b>title bar</b>, <b>activity bar</b>, <b>side bar</b>, and <b>status bar</b> of each VSCode window based on a hash of the workspace path. Theme-aware (light / dark), zero configuration.
 </p>
 
+<p align="center">
+  <a href="https://marketplace.visualstudio.com/items?itemName=tuanchauict.plumage"><img src="https://img.shields.io/visual-studio-marketplace/v/tuanchauict.plumage?label=Marketplace&color=blue" alt="Marketplace version"></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=tuanchauict.plumage"><img src="https://img.shields.io/visual-studio-marketplace/i/tuanchauict.plumage" alt="Installs"></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=tuanchauict.plumage"><img src="https://img.shields.io/visual-studio-marketplace/r/tuanchauict.plumage" alt="Rating"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/tuanchauict/vscode-plumage" alt="License"></a>
+</p>
+
 Built for people who keep ten VSCode windows open and can't tell which is which.
 
 ## Why not Peacock?
@@ -19,23 +26,19 @@ Peacock is manual and its default greens/oranges are loud. Plumage:
 - Keeps the side bar a **subtle tint** of the editor background instead of a wall of color.
 - Reacts to **theme changes** — switch to light mode and the bars adjust.
 
-## Install (sideload)
+## Install
+
+**From the Extensions sidebar** — open VSCode, press `Cmd/Ctrl + Shift + X`, search for **Plumage**, click Install.
+
+**From the command line:**
 
 ```sh
-git clone https://github.com/tuanchauict/vscode-plumage.git
-cd vscode-plumage
-npm install
-npm run compile
+code --install-extension tuanchauict.plumage
 ```
 
-Then open the folder in VSCode and press `F5` to launch an Extension Development Host with Plumage active.
+**From the web:** https://marketplace.visualstudio.com/items?itemName=tuanchauict.plumage
 
-To package as a `.vsix` for personal install:
-
-```sh
-npx @vscode/vsce package
-code --install-extension plumage-0.0.1.vsix
-```
+After install, open any folder. The chrome will recolor on the next window — no setup needed.
 
 ## Usage
 
@@ -66,6 +69,31 @@ Plumage runs on startup. No setup. Open a folder and the chrome recolors.
 
 Only Plumage's own keys are touched — anything you've manually set is preserved.
 
+## Build from source
+
+```sh
+git clone https://github.com/tuanchauict/vscode-plumage.git
+cd vscode-plumage
+npm install
+npm run compile
+```
+
+Open the folder in VSCode and press `F5` to launch an Extension Development Host with the local build active. To produce an installable `.vsix`:
+
+```sh
+npx @vscode/vsce package
+code --install-extension plumage-0.0.1.vsix
+```
+
 ## License
 
 MIT
+
+---
+
+<p align="center">
+  <sub>
+    <i><b>plumage</b> /ˈpluː.mɪdʒ/ (noun)</i> — a bird's covering of feathers, especially when vividly coloured.<br>
+    Like a kingfisher's flash of blue or a peacock's iridescent fan, every workspace deserves its own.
+  </sub>
+</p>
