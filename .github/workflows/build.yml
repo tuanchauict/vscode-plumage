@@ -39,3 +39,9 @@ jobs:
         with:
           files: '*.vsix'
           generate_release_notes: true
+
+      - name: Publish to VS Code Marketplace
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: npx --yes @vscode/vsce publish --no-dependencies --packagePath $(ls *.vsix)
