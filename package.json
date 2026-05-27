@@ -2,7 +2,7 @@
   "name": "plumage",
   "displayName": "Plumage",
   "description": "Automatically colors the title bar, activity bar, side bar, and status bar based on a hash of the workspace path. Theme-aware.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "tuanchauict",
   "license": "MIT",
   "keywords": [

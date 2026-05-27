@@ -178,7 +178,25 @@ async function setPalette() {
     placeHolder: "Pick a Plumage palette",
   });
   if (!choice) return;
-  await cfg.update("palette", choice.value, vscode.ConfigurationTarget.Workspace);
+  const target = vscode.workspace.workspaceFolders
+    ? vscode.ConfigurationTarget.Workspace
+    : vscode.ConfigurationTarget.Global;
+  try {
+    await cfg.update("palette", choice.value, target);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (/not a registered configuration/i.test(msg)) {
+      const pick = await vscode.window.showWarningMessage(
+        "Plumage was just upgraded. Reload the window to finish registering the new palette setting.",
+        "Reload Window",
+      );
+      if (pick === "Reload Window") {
+        await vscode.commands.executeCommand("workbench.action.reloadWindow");
+      }
+      return;
+    }
+    throw err;
+  }
 }
 
 async function pickColor() {
