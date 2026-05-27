@@ -2,7 +2,7 @@
   "name": "plumage",
   "displayName": "Plumage",
   "description": "Automatically colors the title bar, activity bar, side bar, and status bar based on a hash of the workspace path. Theme-aware.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "tuanchauict",
   "license": "MIT",
   "keywords": [
@@ -51,6 +51,10 @@
       {
         "command": "plumage.pick",
         "title": "Plumage: Pick Color..."
+      },
+      {
+        "command": "plumage.setPalette",
+        "title": "Plumage: Set Palette..."
       }
     ],
     "configuration": {
@@ -65,6 +69,19 @@
           "type": "integer",
           "default": 0,
           "description": "Offset added to the hash-derived color index. Bumped by Shuffle / Pick Color."
+        },
+        "plumage.palette": {
+          "type": "string",
+          "enum": ["auto", "dim", "light", "vibrant", "contrast"],
+          "enumDescriptions": [
+            "Follow the active VS Code theme: dim chrome on dark themes, light chrome on light themes.",
+            "Monokai-flavored dim chrome.",
+            "Soft, pastel light chrome.",
+            "Bold, saturated chrome with strong hue presence.",
+            "High-contrast chrome with near-black side bar and bright accents."
+          ],
+          "default": "auto",
+          "description": "Which chrome palette to use."
         }
       }
     }

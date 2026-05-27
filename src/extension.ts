@@ -27,7 +27,18 @@ const MANAGED_KEYS = [
   "statusBarItem.hoverBackground",
   "statusBarItem.remoteBackground",
   "statusBarItem.remoteForeground",
+  "list.activeSelectionBackground",
+  "list.activeSelectionForeground",
+  "list.inactiveSelectionBackground",
+  "list.inactiveSelectionForeground",
+  "list.hoverBackground",
+  "list.hoverForeground",
+  "list.focusBackground",
+  "list.focusForeground",
 ];
+
+type PaletteMode = "auto" | "dim" | "light" | "vibrant" | "contrast";
+type PaletteId = Exclude<PaletteMode, "auto">;
 
 export function activate(context: vscode.ExtensionContext) {
   const apply = () => applyColors().catch((e) => console.error("[Plumage]", e));
@@ -40,7 +51,8 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (
         e.affectsConfiguration("plumage.enabled") ||
-        e.affectsConfiguration("plumage.hueOffset")
+        e.affectsConfiguration("plumage.hueOffset") ||
+        e.affectsConfiguration("plumage.palette")
       ) {
         apply();
       }
@@ -49,6 +61,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("plumage.clear", clearColors),
     vscode.commands.registerCommand("plumage.shuffle", shuffleColor),
     vscode.commands.registerCommand("plumage.pick", pickColor),
+    vscode.commands.registerCommand("plumage.setPalette", setPalette),
   );
 }
 
@@ -66,8 +79,10 @@ async function applyColors() {
 
   const offset = cfg.get<number>("hueOffset") ?? 0;
   const accent = pickAccent(seed, offset);
-  const isDark = isDarkTheme();
-  const palette = buildPalette(accent.hue, isDark);
+  const paletteMode = cfg.get<PaletteMode>("palette") ?? "auto";
+  const resolved: PaletteId =
+    paletteMode === "auto" ? (isDarkTheme() ? "dim" : "light") : paletteMode;
+  const palette = buildPalette(accent.hue, PALETTE_SPECS[resolved]);
 
   const colorCfg = vscode.workspace.getConfiguration();
   const existing = colorCfg.get<Record<string, string>>(COLOR_CUSTOMIZATIONS) ?? {};
@@ -146,6 +161,26 @@ async function shuffleColor() {
   vscode.window.setStatusBarMessage(`Plumage: ${accent.name}`, 2500);
 }
 
+async function setPalette() {
+  const cfg = vscode.workspace.getConfiguration("plumage");
+  const current = cfg.get<PaletteMode>("palette") ?? "auto";
+  const items: (vscode.QuickPickItem & { value: PaletteMode })[] = [
+    { label: "Auto", description: "Follow the active VS Code theme", value: "auto" },
+    { label: "Dim", description: "Monokai-flavored dim chrome", value: "dim" },
+    { label: "Light", description: "Light chrome", value: "light" },
+    { label: "Vibrant", description: "Bold, saturated chrome", value: "vibrant" },
+    { label: "Contrast", description: "High-contrast chrome with near-black side bar", value: "contrast" },
+  ];
+  for (const it of items) {
+    if (it.value === current) it.description = `${it.description} (current)`;
+  }
+  const choice = await vscode.window.showQuickPick(items, {
+    placeHolder: "Pick a Plumage palette",
+  });
+  if (!choice) return;
+  await cfg.update("palette", choice.value, vscode.ConfigurationTarget.Workspace);
+}
+
 async function pickColor() {
   const seed = getWorkspaceSeed();
   if (!seed) {
@@ -166,57 +201,95 @@ async function pickColor() {
   await cfg.update("hueOffset", choice.offset, vscode.ConfigurationTarget.Workspace);
 }
 
-function buildPalette(hue: number, isDark: boolean): Record<string, string> {
-  if (isDark) {
-    // Bars: saturated enough to read as a hue, dark enough to feel like a chrome strip.
-    const barBg = hsl(hue, 0.42, 0.30);
-    const barBgInactive = hsl(hue, 0.34, 0.24);
-    const barBgHover = hsl(hue, 0.45, 0.36);
-    // Sidebar: barely-there tint of the editor background (~#1e1e1e).
-    const sideBg = hsl(hue, 0.18, 0.15);
-    const sideSection = hsl(hue, 0.22, 0.19);
-    const sideBorder = hsl(hue, 0.30, 0.24);
-    const fg = "#ffffff";
-    const fgDim = "#c8c8c8";
-    const accent = hsl(hue, 0.70, 0.62);
-    return {
-      "titleBar.activeBackground": barBg,
-      "titleBar.activeForeground": fg,
-      "titleBar.inactiveBackground": barBgInactive,
-      "titleBar.inactiveForeground": fgDim,
-      "titleBar.border": barBgHover,
-      "activityBar.background": barBg,
-      "activityBar.foreground": fg,
-      "activityBar.inactiveForeground": fgDim,
-      "activityBar.activeBorder": accent,
-      "activityBar.activeBackground": barBgHover,
-      "activityBarBadge.background": accent,
-      "activityBarBadge.foreground": "#1e1e1e",
-      "sideBar.background": sideBg,
-      "sideBar.foreground": "#cccccc",
-      "sideBar.border": sideBorder,
-      "sideBarTitle.foreground": fg,
-      "sideBarSectionHeader.background": sideSection,
-      "sideBarSectionHeader.foreground": fg,
-      "statusBar.background": barBg,
-      "statusBar.foreground": fg,
-      "statusBar.border": barBgHover,
-      "statusBar.noFolderBackground": barBgInactive,
-      "statusBarItem.hoverBackground": barBgHover,
-      "statusBarItem.remoteBackground": barBgHover,
-      "statusBarItem.remoteForeground": fg,
-    };
-  }
+// Each pair is [saturation, lightness] in 0..1. The hue is shared across the palette.
+interface PaletteSpec {
+  baseTone: "dark" | "light";
+  barBg: [number, number];
+  barBgInactive: [number, number];
+  barBgHover: [number, number];
+  sideBg: [number, number];
+  sideSection: [number, number];
+  sideBorder: [number, number];
+  listActive: [number, number];
+  listInactive: [number, number];
+  listHover: [number, number];
+  accent: [number, number];
+}
 
-  const barBg = hsl(hue, 0.55, 0.74);
-  const barBgInactive = hsl(hue, 0.45, 0.82);
-  const barBgHover = hsl(hue, 0.60, 0.66);
-  const sideBg = hsl(hue, 0.40, 0.96);
-  const sideSection = hsl(hue, 0.45, 0.90);
-  const sideBorder = hsl(hue, 0.40, 0.82);
-  const fg = "#1e1e1e";
-  const fgDim = "#4a4a4a";
-  const accent = hsl(hue, 0.70, 0.40);
+const PALETTE_SPECS: Record<PaletteId, PaletteSpec> = {
+  dim: {
+    baseTone: "dark",
+    barBg: [0.42, 0.30],
+    barBgInactive: [0.34, 0.24],
+    barBgHover: [0.45, 0.36],
+    sideBg: [0.18, 0.15],
+    sideSection: [0.22, 0.19],
+    sideBorder: [0.30, 0.24],
+    listActive: [0.45, 0.32],
+    listInactive: [0.28, 0.22],
+    listHover: [0.30, 0.22],
+    accent: [0.70, 0.62],
+  },
+  light: {
+    baseTone: "light",
+    barBg: [0.55, 0.74],
+    barBgInactive: [0.45, 0.82],
+    barBgHover: [0.60, 0.66],
+    sideBg: [0.40, 0.96],
+    sideSection: [0.45, 0.90],
+    sideBorder: [0.40, 0.82],
+    listActive: [0.55, 0.78],
+    listInactive: [0.40, 0.88],
+    listHover: [0.45, 0.92],
+    accent: [0.70, 0.40],
+  },
+  vibrant: {
+    baseTone: "dark",
+    barBg: [0.85, 0.42],
+    barBgInactive: [0.70, 0.32],
+    barBgHover: [0.95, 0.50],
+    sideBg: [0.35, 0.14],
+    sideSection: [0.50, 0.20],
+    sideBorder: [0.80, 0.38],
+    listActive: [0.85, 0.36],
+    listInactive: [0.45, 0.22],
+    listHover: [0.55, 0.20],
+    accent: [1.00, 0.65],
+  },
+  contrast: {
+    baseTone: "dark",
+    barBg: [1.00, 0.45],
+    barBgInactive: [0.80, 0.30],
+    barBgHover: [1.00, 0.55],
+    sideBg: [0.00, 0.04],
+    sideSection: [0.00, 0.10],
+    sideBorder: [1.00, 0.55],
+    listActive: [1.00, 0.40],
+    listInactive: [0.50, 0.18],
+    listHover: [0.60, 0.14],
+    accent: [1.00, 0.70],
+  },
+};
+
+function buildPalette(hue: number, spec: PaletteSpec): Record<string, string> {
+  const isDark = spec.baseTone === "dark";
+  const fg = isDark ? "#ffffff" : "#1e1e1e";
+  const fgDim = isDark ? "#c8c8c8" : "#4a4a4a";
+  const sideFg = isDark ? "#cccccc" : "#1e1e1e";
+  const badgeFg = isDark ? "#1e1e1e" : "#ffffff";
+
+  const h = (sl: [number, number]) => hsl(hue, sl[0], sl[1]);
+  const barBg = h(spec.barBg);
+  const barBgInactive = h(spec.barBgInactive);
+  const barBgHover = h(spec.barBgHover);
+  const sideBg = h(spec.sideBg);
+  const sideSection = h(spec.sideSection);
+  const sideBorder = h(spec.sideBorder);
+  const listActive = h(spec.listActive);
+  const listInactive = h(spec.listInactive);
+  const listHover = h(spec.listHover);
+  const accent = h(spec.accent);
+
   return {
     "titleBar.activeBackground": barBg,
     "titleBar.activeForeground": fg,
@@ -229,9 +302,9 @@ function buildPalette(hue: number, isDark: boolean): Record<string, string> {
     "activityBar.activeBorder": accent,
     "activityBar.activeBackground": barBgHover,
     "activityBarBadge.background": accent,
-    "activityBarBadge.foreground": "#ffffff",
+    "activityBarBadge.foreground": badgeFg,
     "sideBar.background": sideBg,
-    "sideBar.foreground": fg,
+    "sideBar.foreground": sideFg,
     "sideBar.border": sideBorder,
     "sideBarTitle.foreground": fg,
     "sideBarSectionHeader.background": sideSection,
@@ -243,6 +316,14 @@ function buildPalette(hue: number, isDark: boolean): Record<string, string> {
     "statusBarItem.hoverBackground": barBgHover,
     "statusBarItem.remoteBackground": barBgHover,
     "statusBarItem.remoteForeground": fg,
+    "list.activeSelectionBackground": listActive,
+    "list.activeSelectionForeground": fg,
+    "list.inactiveSelectionBackground": listInactive,
+    "list.inactiveSelectionForeground": fg,
+    "list.hoverBackground": listHover,
+    "list.hoverForeground": fg,
+    "list.focusBackground": listActive,
+    "list.focusForeground": fg,
   };
 }
 

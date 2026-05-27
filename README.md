@@ -54,6 +54,7 @@ Plumage runs on startup. No setup. Open a folder and the chrome recolors.
 | `Plumage: Refresh Colors` | Re-apply colors (e.g. after editing settings). |
 | `Plumage: Shuffle (next color)` | Advance to the next color in the curated list if you don't like the default. |
 | `Plumage: Pick Color...` | Quick-pick from all 14 colors. |
+| `Plumage: Set Palette...` | Choose Auto / Dim / Light / Vibrant / Contrast chrome palette. |
 | `Plumage: Clear Colors` | Remove all Plumage-managed entries from `workbench.colorCustomizations`. |
 
 ### Settings
@@ -62,6 +63,7 @@ Plumage runs on startup. No setup. Open a folder and the chrome recolors.
 | --- | --- | --- |
 | `plumage.enabled` | `true` | Toggle the extension on/off. |
 | `plumage.hueOffset` | `0` | Integer offset added to the hash-derived color index. Bumped by Shuffle / Pick. |
+| `plumage.palette` | `"auto"` | Chrome flavor: `"auto"` follows the editor theme, `"dim"` is Monokai-flavored, `"light"` is soft pastel, `"vibrant"` is bold/saturated, `"contrast"` is high-contrast with a near-black side bar. |
 
 ## How it works
 
