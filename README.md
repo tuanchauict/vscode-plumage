@@ -25,7 +25,7 @@ Built for people who keep ten VSCode windows open and can't tell which is which.
 Peacock is manual and its default greens/oranges are loud. Plumage:
 
 - Picks a color **automatically** from the workspace path — same project, same color, every time.
-- Uses **14 hand-picked hues** that look good on both light and dark themes (no muddy yellow/amber).
+- Uses **24 hand-picked hues** that look good on both light and dark themes (no muddy yellow/amber).
 - Keeps the side bar a **subtle tint** of the editor background instead of a wall of color.
 - Reacts to **theme changes** — switch to light mode and the bars adjust.
 
@@ -52,8 +52,8 @@ Plumage runs on startup. No setup. Open a folder and the chrome recolors.
 | Command | What it does |
 | --- | --- |
 | `Plumage: Refresh Colors` | Re-apply colors (e.g. after editing settings). |
-| `Plumage: Shuffle (next color)` | Advance to the next color in the curated list if you don't like the default. |
-| `Plumage: Pick Color...` | Quick-pick from all 14 colors. |
+| `Plumage: Shuffle (next color)` | Jump to a different color (roughly opposite on the color wheel) if you don't like the default. |
+| `Plumage: Pick Color...` | Quick-pick from all 24 colors. |
 | `Plumage: Set Palette...` | Choose Auto / Dim / Light / Vibrant / Contrast chrome palette. |
 | `Plumage: Clear Colors` | Remove all Plumage-managed entries from `workbench.colorCustomizations`. |
 
@@ -68,7 +68,7 @@ Plumage runs on startup. No setup. Open a folder and the chrome recolors.
 ## How it works
 
 1. Hash the workspace's absolute path (FNV-1a 32-bit).
-2. Map the hash to one of 14 curated hues: red, orange, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, magenta, pink.
+2. Map the hash to one of 24 curated hues: lime, chartreuse, green, fern, emerald, jade, teal, spruce, cyan, turquoise, sky, azure, blue, indigo, violet, iris, purple, orchid, magenta, fuchsia, pink, rose, red, orange.
 3. Detect the active color theme (`vscode.window.activeColorTheme.kind`) and build a dark- or light-tuned palette.
 4. Write the resulting colors into the workspace's `.vscode/settings.json` under `workbench.colorCustomizations`.
 

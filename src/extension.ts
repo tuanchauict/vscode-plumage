@@ -118,28 +118,52 @@ function isDarkTheme(): boolean {
   );
 }
 
-// Hand-picked hues that look good as backgrounds in both dark and light themes.
-// Yellow/amber/olive bands are omitted because they become muddy brown when dark.
+// Hues spaced ~13° apart around the wheel, skipping the yellow/amber/olive band
+// (~18-80°) because those turn muddy brown when dark.
 interface Accent {
   name: string;
   hue: number;
 }
 const ACCENTS: readonly Accent[] = [
-  { name: "red", hue: 355 },
-  { name: "orange", hue: 18 },
   { name: "lime", hue: 80 },
-  { name: "green", hue: 140 },
-  { name: "emerald", hue: 165 },
-  { name: "teal", hue: 178 },
-  { name: "cyan", hue: 192 },
-  { name: "sky", hue: 205 },
-  { name: "blue", hue: 220 },
-  { name: "indigo", hue: 240 },
-  { name: "violet", hue: 262 },
-  { name: "purple", hue: 282 },
-  { name: "magenta", hue: 305 },
-  { name: "pink", hue: 332 },
+  { name: "chartreuse", hue: 93 },
+  { name: "green", hue: 106 },
+  { name: "fern", hue: 119 },
+  { name: "emerald", hue: 132 },
+  { name: "jade", hue: 145 },
+  { name: "teal", hue: 158 },
+  { name: "spruce", hue: 171 },
+  { name: "cyan", hue: 184 },
+  { name: "turquoise", hue: 197 },
+  { name: "sky", hue: 210 },
+  { name: "azure", hue: 223 },
+  { name: "blue", hue: 235 },
+  { name: "indigo", hue: 248 },
+  { name: "violet", hue: 261 },
+  { name: "iris", hue: 274 },
+  { name: "purple", hue: 287 },
+  { name: "orchid", hue: 300 },
+  { name: "magenta", hue: 313 },
+  { name: "fuchsia", hue: 326 },
+  { name: "pink", hue: 339 },
+  { name: "rose", hue: 352 },
+  { name: "red", hue: 5 },
+  { name: "orange", hue: 18 },
 ];
+
+// Jump roughly half the wheel per shuffle (coprime with the list length) so consecutive
+// shuffles land on a visibly distinct color instead of the next-closest hue in the list.
+const SHUFFLE_STEP = coprimeStep(ACCENTS.length);
+
+function coprimeStep(n: number): number {
+  let step = Math.round(n / 2) || 1;
+  while (gcd(step, n) !== 1) step++;
+  return step;
+}
+
+function gcd(a: number, b: number): number {
+  return b === 0 ? a : gcd(b, a % b);
+}
 
 function pickAccent(input: string, offset: number): Accent {
   const n = ACCENTS.length;
@@ -155,7 +179,7 @@ async function shuffleColor() {
     return;
   }
   const current = cfg.get<number>("hueOffset") ?? 0;
-  const next = current + 1;
+  const next = current + SHUFFLE_STEP;
   await cfg.update("hueOffset", next, vscode.ConfigurationTarget.Workspace);
   const accent = pickAccent(seed, next);
   vscode.window.setStatusBarMessage(`Plumage: ${accent.name}`, 2500);
